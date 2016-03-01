@@ -127,20 +127,7 @@ if(showingLocker.available == "Não"){
   }
 
 });
-  /*  
-  $scope.getButtonClicked = function() {
-      var lockernumber = document.getElementById('lockerNumberInput').value;
-      if(lockernumber.length > 0){
-      lockersItems = lockersRef.orderByChild('number').equalTo(parseInt(lockernumber));
-      $scope.lockers = $firebaseArray(lockersItems);
-      setSrc();
-      }
-      else{
-      $scope.lockers = $firebaseArray(lockersRef);
-      } 
-  }; 
 
-  */
 
   /*
     $scope.addLocker = function(){
