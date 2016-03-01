@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!--Firebase-->
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.min.js"></script>
+
+    <!-- app's js -->
+    <script src="js/app.js"></script>
+
+    <!-- <button class="button button-icon ion-plus" ng-click="addImage()"></button> -->
+  </head>
+
+  <!-- Content --> 
+  <body ng-app="starter" ng-controller="LockerCtrl">
+    <ion-header-bar align-title="center">
+    <h1 class="title">
+    <button class="button button-icon ion-ios-flask-outline balanced resizelogo" ng-click="scrollToTop()"></button>
+    </h1>
+    </ion-header-bar>
+
+    <ion-content>
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" placeholder="N&#xFA;mero do Arm&#xE1;rio" id="lockerNumberInput">
+    </label>
+    
+    <button class="button button-full button-balanced" ng-click="getButtonClicked()">
+      <i class="ion-search"></i>
+      Pesquisar
+    </button>
+ 
+      <div class="list card">
+        <div class="item item-body" ng-repeat="locker in lockers">
+        <a ng-click="preLoadLocker(locker);openLocker()" class="item item-icon-right text-center">
+        <img ng-src="{{locker.src}}" style="width: 35px; height: auto;"> 
+        <p style="text-align: center">  
+         Arm&#xE1;rio - {{locker.number}}                    
+        </p>
+        <i class="icon ion-chevron-right"></i>  
+          </a>
+          
+        </div>
+      </div>
+    </ion-content>
+
+    <script id="lockers-info.html" type="text/ng-template">
+        <div class="modal">
+          <ion-header-bar class="top" align-title="center">
+          <h1 class="title">
+            <button class="button button-icon ion-ios-flask-outline balanced" ng-click="returnView()"></button>
+            </h1>
+            <button class="button button-positive">Alugar</button>
+            </ion-header-bar>
+
+            <ion-content>
+            <!-- Preciso listar: Número, Proprietário, Turma do Proprietário, Matrícula, Disponível (badge), Atributo (Renovado ou Alugado); Pesquisar Time Controller, fazer controle de matrícula via prompt-->
+            <ion-list ng-repeat="showingLocker in showingLocker">
+            <div class="item item-divider" align="center"> <i class="icon ion-key"></i>
+              {{showingLocker.number}}</div>
+            <ion-item class="item item-icon-left">
+              <i class="icon ion-key"></i>
+              <p align="center"><b>{{showingLocker.number}}</b></p>
+            </ion-item>
+            <ion-item class="item item-icon-left">
+            <i class="icon ion-android-person"></i>
+            <p align="center"><b>{{showingLocker.owner}}</b></p>
+            </ion-item>
+              <ion-item class="item item-icon-left">
+            <i class="icon ion-ios-people"></i>
+            <p align="center"><b>{{showingLocker.ownerClass}}</b></p>
+            </ion-item>
+              <ion-item class="item item-icon-left">
+            <i class="icon ion-ios-book"></i>
+            <p align="center"><b>{{showingLocker.ownerMat}}</b></p>
+            </ion-item>
+            <ion-item class="item item-icon-left" ng-init="setBadgeColor(showingLocker)">
+            <i class="icon ion-ios-circle-filled"></i>
+            <p align="center"><b>Disponível - </b></p>
+            <span class="badge" id="av_badge">{{showingLocker.available}}</span>
+            </ion-item>
+            <ion-item class="item item-icon-left">
+            <i class="icon ion-ios-flag"></i>
+            <p align="center"><b>{{showingLocker.status}}</b></p>
+            </ion-item>
+            </ion-list>
+            </ion-content>
+        </div>
+    </script>
+  </body>
+</html>
