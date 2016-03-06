@@ -51,7 +51,7 @@
  
       <div class="list card">
         <div class="item item-body" ng-repeat="locker in lockers">
-        <a ng-click="preLoadLocker(locker);openLocker()" class="item item-icon-right text-center">
+        <a ng-click="preLoadLocker(locker);openLockerInfo()" class="item item-icon-right text-center">
         <img ng-src="{{locker.src}}" style="width: 35px; height: auto;"> 
         <p style="text-align: center">  
          Arm&#xE1;rio - {{locker.number}}                    
@@ -69,7 +69,6 @@
           <h1 class="title">
             <button class="button button-icon ion-ios-flask-outline balanced" ng-click="returnView()"></button>
             </h1>
-            <button class="button button-positive">Alugar</button>
             </ion-header-bar>
 
             <ion-content>
@@ -93,7 +92,7 @@
             <i class="icon ion-ios-book"></i>
             <p align="center"><b>{{showingLocker.ownerMat}}</b></p>
             </ion-item>
-            <ion-item class="item item-icon-left" ng-init="setBadgeColor(showingLocker)">
+            <ion-item class="item item-icon-left" ng-init="setAvBadgeColor(showingLocker)">
             <i class="icon ion-ios-circle-filled"></i>
             <p align="center"><b>Disponível - </b></p>
             <span class="badge" id="av_badge">{{showingLocker.available}}</span>
@@ -102,9 +101,43 @@
             <i class="icon ion-ios-flag"></i>
             <p align="center"><b>{{showingLocker.status}}</b></p>
             </ion-item>
+
+            <button class="button button-block button-positive" ng-click="openLockerNewReg(showingLocker)">Alugar</button>
             </ion-list>
             </ion-content>
         </div>
+    </script>
+
+    <script id="lockers-newReg.html" type="text/ng-template">
+      <div class="modal">
+        <ion-header-bar class="top" align-title="center">
+          <h1 class="title">
+            <button class="button button-icon ion-ios-flask-outline balanced" ng-click="returnView()"></button>
+            </h1>
+        </ion-header-bar>
+
+        <ion-content>
+          <div class="list">
+            <label class="item item-input item-floating-label">
+              <span class="input-label">Seu Nome</span>
+              <input id="ownerInputName" type="text" placeholder="Seu Nome">
+            </label>
+            <label class="item item-input item-floating-label">
+              <span class="input-label">Sua Turma</span>
+              <input id="ownerInputClass" type="text" placeholder="Sua Turma">
+            </label>
+            <label class="item item-input item-floating-label">
+            <span class="input-label">Sua Matrícula</span>
+            <input id="ownerInputMat" type="text" placeholder="Matrícula">
+            </label>
+            <label class="item item-input item-floating-label">
+              <span class="input-label">E-mail ou Telefone</span>
+            <input id="ownerInputContact" type="email" placeholder="E-mail ou Telefone">
+            </label>
+          </div>
+          <button id="submitInfo" align="center" class="button button-block button-positive" ng-click="updateLockerInfo()">Enviar</button>
+        </ion-content>
+      </div>
     </script>
   </body>
 </html>

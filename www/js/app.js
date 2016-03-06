@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic', 'firebase'])
 
-.controller('LockerCtrl', function($scope, $firebaseArray, $timeout, $ionicScrollDelegate, $ionicModal){
+.controller('LockerCtrl', function($scope, $firebaseArray, $timeout, $ionicScrollDelegate, $ionicModal, $ionicPopup){
   var lockersRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/armarios');
 
   function setSrc(attNum){
@@ -45,6 +45,8 @@ angular.module('starter', ['ionic', 'firebase'])
           });
         });
 };
+
+
   $scope.getButtonClicked = function() {
     $scope.lockers = [];
       var lockernumber = document.getElementById('lockerNumberInput').value;
@@ -109,12 +111,79 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     animation: 'slide-in-up'
   });
   
-  $scope.openLocker = function(){
+  $ionicModal.fromTemplateUrl('lockers-newReg.html', function(modal){
+    $scope.lockersNewRegModal = modal;
+  },
+  {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+  $scope.openLockerNewReg = function(showingLocker){
+    //Executar if available
+    var checkLockerQuery = lockersRef.orderByChild('number').equalTo(showingLocker.number);
+    $scope.lockerNum = showingLocker.number;
+    checkLockerQuery.once('value', function(snapshot){
+      $timeout(function(){
+        snapshot.forEach(function(data){
+          dataval = data.val();
+          if(dataval.available == "Sim"){
+            $scope.lockersNewRegModal.show();
+          }
+          else if(dataval.available == "Não"){
+            $ionicPopup.alert({
+        title: 'Erro',
+        content: 'O armário não está mais disponível'
+      });
+            $scope.lockersInfoModal.hide();
+            $scope.lockersNewRegModal.hide();
+          }
+        });
+      });
+    });
+  };
+
+  $scope.updateLockerInfo = function(){
+    var ownerInputName = document.getElementById('ownerInputName').value;
+    var ownerInputClass = document.getElementById('ownerInputClass').value;
+    var ownerInputMat = document.getElementById('ownerInputMat').value;
+    var ownerInputContact = document.getElementById('ownerInputContact').value;
+    var lockerNum = parseInt($scope.lockerNum);
+    var submitInfo = document.getElementById("submitInfo");
+    if(ownerInputName.length > 0 && ownerInputClass.length > 0 && ownerInputMat.length > 0 && ownerInputContact.length > 0){
+    updateInfoQuery = lockersRef.orderByChild('number').equalTo(lockerNum);
+    updateInfoQuery.once('value', function(snapshot){
+      snapshot.forEach(function(data){
+        var key = data.key();
+        lockersRef.child(key).update(
+        {
+          owner: ownerInputName,
+          ownerClass: ownerInputClass,
+          ownerMat: ownerInputMat,
+          ownerContact: ownerInputContact,
+          available: 'Não',
+          status: 'Alugado'
+        });
+        $ionicPopup.alert({
+        title: 'Sucesso',
+        content: 'Cadastro realizado com sucesso, você tem até 1 (um) dia para realizar o pagamento da taxa'
+      });
+      });
+    });
+  }
+  else{
+    $ionicPopup.alert({
+        title: 'Erro',
+        content: 'Você está tentando inserir valores nulos ou inválidos'
+      });
+  }
+  };
+  $scope.openLockerInfo = function(){
     $scope.lockersInfoModal.show();
   }
-  $scope.setBadgeColor = function(showingLocker){
+  $scope.setAvBadgeColor = function(showingLocker){
     var AvBadge = document.getElementById("av_badge");
-if(showingLocker.available == "Não"){
+    if(showingLocker.available == "Não"){
       AvBadge.className = "badge badge-assertive";
     }
     else if(showingLocker.available == "Sim"){
@@ -124,10 +193,50 @@ if(showingLocker.available == "Não"){
 
   $scope.returnView = function(){
     $scope.lockersInfoModal.hide();
+    $scope.lockersNewRegModal.hide();
   }
 
 });
 
+/*   $scope.preLoadLocker = function(locker){
+    $scope.showingLocker = [];
+        var query = lockersRef.orderByChild('number').equalTo(locker.number); 
+        query.once('value', function(snapshot){
+        $timeout(function(){   
+          snapshot.forEach(function(data){
+            var attNum = data.val().number;
+            dataval = data.val();
+              $scope.key = data.key(); 
+              setSrc(attNum);
+              $scope.showingLocker = [
+              {
+                number: dataval.number, 
+                src:$scope.imgSrc, 
+                owner: dataval.owner,
+                ownerClass: dataval.ownerClass,
+                ownerMat: dataval.ownerMat,
+                available: dataval.available,
+                status: dataval.status
+              }];
+              console.log($scope.showingLocker); 
+            });
+          });
+        });
+}; */
+  /*  
+  $scope.getButtonClicked = function() {
+      var lockernumber = document.getElementById('lockerNumberInput').value;
+      if(lockernumber.length > 0){
+      lockersItems = lockersRef.orderByChild('number').equalTo(parseInt(lockernumber));
+      $scope.lockers = $firebaseArray(lockersItems);
+      setSrc();
+      }
+      else{
+      $scope.lockers = $firebaseArray(lockersRef);
+      } 
+  }; 
+
+  */
 
   /*
     $scope.addLocker = function(){
