@@ -155,6 +155,8 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     updateInfoQuery.once('value', function(snapshot){
       snapshot.forEach(function(data){
         var key = data.key();
+        var dataval = data.val();
+        if(dataval.available == "Sim"){
         lockersRef.child(key).update(
         {
           owner: ownerInputName,
@@ -168,6 +170,15 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
         title: 'Sucesso',
         content: 'Cadastro realizado com sucesso, você tem até 1 (um) dia para realizar o pagamento da taxa'
       });
+     }
+     else if(dataval.available == "Não"){
+            $ionicPopup.alert({
+        title: 'Erro',
+        content: 'O armário não está mais disponível'
+      });
+            $scope.lockersInfoModal.hide();
+            $scope.lockersNewRegModal.hide();
+          }
       });
     });
   }
