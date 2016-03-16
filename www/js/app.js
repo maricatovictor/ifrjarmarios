@@ -79,7 +79,8 @@ angular.module('starter', ['ionic', 'firebase'])
       }
  
       else{
-        lockersRef.once('value', function(snapshot){
+        var availableQuery = lockersRef.orderByChild('available').equalTo("Sim");
+        availableQuery.once('value', function(snapshot){
           $timeout(function(){
           snapshot.forEach(function(data){
             dataval = data.val();
