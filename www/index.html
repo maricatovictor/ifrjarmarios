@@ -14,9 +14,11 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
+<script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
+    <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
 
     <!--Firebase-->
     <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
@@ -38,16 +40,18 @@
     </h1>
     </ion-header-bar>
 
-    <ion-content>
+    <ion-content ng-init="setTimeCountControllers()">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" placeholder="N&#xFA;mero do Arm&#xE1;rio" id="lockerNumberInput">
     </label>
     
-    <button class="button button-full button-balanced" ng-click="getButtonClicked()">
-      <i class="ion-search"></i>
+    <button id="search_button" class="button button-full button-balanced" ng-click="getButtonClicked()">
+      <i class="ion-search" ></i>
       Pesquisar
     </button>
+
+    <p id="alertText" align='center'><b></b></p>
  
       <div class="list card">
         <div class="item item-body" ng-repeat="locker in lockers">
@@ -78,31 +82,31 @@
               {{showingLocker.number}}</div>
             <ion-item class="item item-icon-left">
               <i class="icon ion-key"></i>
-              <p align="center"><b>{{showingLocker.number}}</b></p>
+              <p align="center"><b>{{showingLocker.number}}<br></b></p>
             </ion-item>
             <ion-item class="item item-icon-left">
             <i class="icon ion-android-person"></i>
-            <p align="center"><b>{{showingLocker.owner}}</b></p>
+            <p align="center"><b>{{showingLocker.owner}}<br></b></p>
             </ion-item>
               <ion-item class="item item-icon-left">
             <i class="icon ion-ios-people"></i>
-            <p align="center"><b>{{showingLocker.ownerClass}}</b></p>
+            <p align="center"><b>{{showingLocker.ownerClass}}<br></b></p>
             </ion-item>
               <ion-item class="item item-icon-left">
             <i class="icon ion-ios-book"></i>
-            <p align="center"><b>{{showingLocker.ownerMat}}</b></p>
+            <p align="center"><b>{{showingLocker.ownerMat}}<br></b></p>
             </ion-item>
             <ion-item class="item item-icon-left" ng-init="setAvBadgeColor(showingLocker)">
             <i class="icon ion-ios-circle-filled"></i>
             <p align="center"><b>Disponível - </b></p>
-            <span class="badge" id="av_badge">{{showingLocker.available}}</span>
+            <span class="badge" id="av_badge">{{showingLocker.available}}<br></span>
             </ion-item>
-            <ion-item class="item item-icon-left">
+            <ion-item class="item item-icon-left" ng-init="setStatusTextColor(showingLocker)">
             <i class="icon ion-ios-flag"></i>
-            <p align="center"><b>{{showingLocker.status}}</b></p>
+            <p align="center" id="status_text"><b>{{showingLocker.status}}<br></b></p>
             </ion-item>
 
-            <button class="button button-block button-positive" ng-click="openLockerNewReg(showingLocker)">Alugar</button>
+            <button class="button button-block button-positive" ng-click="openLockerNewReg(showingLocker)">Reservar</button>
             </ion-list>
             </ion-content>
         </div>

@@ -11,10 +11,10 @@
 	align-content: right;
 }
 .badge {
-
     position:center !important;
     display: inline !important;
     top: center !important;
-  
- 
+}
+.popup-body {
+  text-align: center;
 }
