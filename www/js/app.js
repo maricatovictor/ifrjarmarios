@@ -60,7 +60,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   };
 
   function setSrc(attNum){
-    if(attNum == 101 || attNum == 102){
+    if(attNum < 10 || attNum >= 15 && attNum <= 20){
       $scope.imgSrc = 'img/locker_test2.png';
     }
     else{
@@ -101,6 +101,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
   $scope.getButtonClicked = function() {
     $scope.lockers = [];
+    alertText.innerHTML = "";
       var lockernumber = document.getElementById('lockerNumberInput').value;
       if(lockernumber.length > 0){
         lockerInputedNumber = parseInt(lockernumber);
@@ -289,7 +290,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
       else{
           countcheck = false;
         }
-    })
+    });
     var ownerInputName = document.getElementById('ownerInputName').value;
     var ownerInputClass = document.getElementById('ownerInputClass').value;
     var ownerInputMat = document.getElementById('ownerInputMat').value;
@@ -299,13 +300,27 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
 
     if(ownerInputName.length > 0 && ownerInputClass
       .length > 0 && ownerInputMat.length > 0 && ownerInputContact.length > 0){
-    updateInfoQuery = lockersRef.orderByChild('number').equalTo(lockerNum);
 
+    updateInfoQuery = lockersRef.orderByChild('number').equalTo(lockerNum);
+  $timeout(function(){
+    matCheckQuery = lockersRef.orderByChild('ownerMat').equalTo(ownerInputMat).on('value', function(snapshot){
+      snapshot.forEach(function(data){
+        if(data.val().ownerMat == ownerInputMat){
+          window.matCheck = false;
+        }
+        else{
+          window.matCheck = true;
+        }
+      });
+    });
+  });
+    matCheck = 'matCheck' in window;
+    console.log(matCheck);
     updateInfoQuery.once('value', function(snapshot){
       snapshot.forEach(function(data){
         var key = data.key();
         var dataval = data.val();
-        if(dataval.available == "Sim" && countcheck === true){
+        if(dataval.available == "Sim" && countcheck === true && matCheck === true){
         hcount++;
         hoursRef.update({hcount: hcount});
         lockersRef.child(key).update(
@@ -344,6 +359,14 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
           $scope.lockersInfoModal.hide();
           $scope.lockersNewRegModal.hide();
           }
+      else if(matCheck === false){
+        $ionicPopup.alert({
+              title: 'Já há um armário registrado nesta matrícula',
+              template: 'Permita que outras pessoas também possam alugar seus armários'
+            });
+          $scope.lockersInfoModal.hide();
+          $scope.lockersNewRegModal.hide();
+      }
       });
     });
   }
@@ -378,83 +401,16 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
 
 });
 
-/*   $scope.preLoadLocker = function(locker){
-    $scope.showingLocker = [];
-        var query = lockersRef.orderByChild('number').equalTo(locker.number); 
-        query.once('value', function(snapshot){
-        $timeout(function(){   
-          snapshot.forEach(function(data){
-            var attNum = data.val().number;
-            dataval = data.val();
-              $scope.key = data.key(); 
-              setSrc(attNum);
-              $scope.showingLocker = [
-              {
-                number: dataval.number, 
-                src:$scope.imgSrc, 
-                owner: dataval.owner,
-                ownerClass: dataval.ownerClass,
-                ownerMat: dataval.ownerMat,
-                available: dataval.available,
-                status: dataval.status
-              }];
-              console.log($scope.showingLocker); 
-            });
-          });
-        });
-}; */
-  /*  
-  $scope.getButtonClicked = function() {
-      var lockernumber = document.getElementById('lockerNumberInput').value;
-      if(lockernumber.length > 0){
-      lockersItems = lockersRef.orderByChild('number').equalTo(parseInt(lockernumber));
-      $scope.lockers = $firebaseArray(lockersItems);
-      setSrc();
-      }
-      else{
-      $scope.lockers = $firebaseArray(lockersRef);
-      } 
-  }; 
-
-  */
-
-  /*
-    $scope.addLocker = function(){
-      var number = 100;
-      var src;
-      for(i=0;i<125;i++){
+/*   
+$scope.addLocker = function(){
+      var number = 400; //ultimo numero de armario
+      for(i=0;i<5;i++){ //i<quantidade de armarios a serem adicionados
         number++;
-        if(number<125){
-        src="img/locker_test.jpg";
-      }
-      else{
-        src="img/locker_test2.png";
-      }
-
       lockersRef.push().set({
           'number': number,
-          'src': src
+          'available': 'Sim',
+           'status': "Disponível"
         });
     } 
-    };
-    */
-    /*
-    $scope.updateInfo = function(){
-    lockersRef.once('value', function(snapshot){
-      snapshot.forEach(function(data){
-      var number = data.val().number;
-      var key = data.key();
-      lockersRef.child(key).update(
-        {
-          owner: 'Victor',
-          ownerClass: 'MAM231',
-          ownerMat: '102030120340',
-          available: 'Não',
-          status: 'Alugado'
-        });
-    });
-    });
-  };  
-        
-  }; */
+    };*/
 
