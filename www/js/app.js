@@ -42,6 +42,9 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
             }
             else{
             window.countcheck = false;
+            searchButton.className = "button button-full button-assertive";
+            alertText.innerHTML = "Já foram cadastrados 125 armários neste horário";
+            alertText.style.color = "red";
             }
           }
           else{
