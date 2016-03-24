@@ -7,7 +7,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
 .controller('LockerCtrl', function($scope, $firebaseArray, $timeout, $ionicScrollDelegate, $ionicModal, $ionicPopup){
   var lockersRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/armarios');
-  var hoursRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/armarios/horarios');
+  var hoursRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/horarios');
   hnow = new Date().getHours();
   heuteData = new Date();
   heuteData.setHours(hnow - 3);
@@ -15,6 +15,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   $scope.setTimeCountControllers = function(){
     var searchButton = document.getElementById('search_button');
     if(hnow >= 9 || hnow <= 12 || hnow >= 14 || hnow <= 18 || hnow >= 20 || hnow >= 23){
+      $timeout(function(){
       hoursRef.once('value', function(data){
           var manha1 = data.val().manha1;
           var manhafin = data.val().manhafin;
@@ -54,6 +55,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
             alertText.style.color = "red";
           }
         });
+    });
     }  
     timecheck = 'timecheck' in window;
     countcheck = 'countcheck' in window;
@@ -303,13 +305,11 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
 
     updateInfoQuery = lockersRef.orderByChild('number').equalTo(lockerNum);
   $timeout(function(){
+    window.matCheck = true;
     matCheckQuery = lockersRef.orderByChild('ownerMat').equalTo(ownerInputMat).on('value', function(snapshot){
       snapshot.forEach(function(data){
         if(data.val().ownerMat == ownerInputMat){
           window.matCheck = false;
-        }
-        else{
-          window.matCheck = true;
         }
       });
     });
@@ -383,6 +383,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
   }
   $scope.setAvBadgeColor = function(showingLocker){
     var AvBadge = document.getElementById("av_badge");
+    var statusp = document.getElementById("status_p");
     if(showingLocker.available == "Não" && showingLocker.status == "Alugado"){
       AvBadge.className = "badge badge-assertive";
       }
@@ -391,6 +392,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
       }
     else if(showingLocker.status == "Reservado" && showingLocker.available == "Não"){
       AvBadge.className = "badge badge-energized";
+      statusp.style.color = "gold";
       }
   }
 
@@ -398,9 +400,10 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     $scope.lockersInfoModal.hide();
     $scope.lockersNewRegModal.hide();
   }
-
+   
 });
 
+ 
 /*   
 $scope.addLocker = function(){
       var number = 400; //ultimo numero de armario
