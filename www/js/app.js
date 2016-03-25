@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $ionicPopup) {
   $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -17,6 +17,17 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
    if (navigator.splashscreen) {
      navigator.splashscreen.hide();
   } 
+  if(window.Connection) {
+      if(navigator.connection.type == Connection.NONE) {
+        $ionicPopup.confirm({
+          title: 'Desconectado',
+          content: 'Você está sem acesso à internet!'
+        })
+        .then(function(result) {
+            ionic.Platform.exitApp();
+        });
+      }
+    }
   });
 })
 
@@ -24,8 +35,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   var lockersRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/armarios');
   var hoursRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/horarios');
   hnow = new Date().getHours();
-  heuteData = new Date();
-  heuteData.setHours(hnow - 3);
+  hoursRef.update({ timestamp: Firebase.ServerValue.TIMESTAMP});
   alertText = document.getElementById('alertText');
   $scope.setTimeCountControllers = function(){
     var searchButton = document.getElementById('search_button');
@@ -40,7 +50,11 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           var lastH1 = data.val().lastH1;
           var lastHfin = data.val().lastHfin;
           hcount = data.val().hcount;
-
+          timestamp = data.val().timestamp;
+          timestampDate = new Date(timestamp * 1000).getTime();
+          heuteData = new Date(timestampDate);
+          heuteData.setHours(hnow - 2); 
+          console.log(heuteData);
           if(hnow >= manha1 && hnow < manhafin || hnow >= tarde1 && hnow < tardefin || hnow >= noite1 && hnow < noitefin){
             window.timecheck = true;
 
@@ -114,6 +128,17 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
 
   $scope.getButtonClicked = function() {
+    if(window.Connection) {
+      if(navigator.connection.type == Connection.NONE) {
+        $ionicPopup.confirm({
+          title: 'Desconectado',
+          content: 'Você está sem acesso à internet!'
+        })
+        .then(function(result) {
+            ionic.Platform.exitApp();
+        });
+      }
+    }
     $scope.lockers = [];
     alertText.innerHTML = "";
       var lockernumber = document.getElementById('lockerNumberInput').value;
@@ -146,8 +171,8 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
  
       else{
         var reservadoQuery = lockersRef.orderByChild('status').equalTo("Reservado");
+        $timeout(function() {
         reservadoQuery.once('value', function(snapshot){
-           $timeout(function() {
           snapshot.forEach(function(data){
             var dataval = data.val();
             $scope.key = data.key();
@@ -156,9 +181,10 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
               console.log(regData.getHours() + 1);
               timeoutCheck = regData;
               timeoutCheck.setDate(timeoutCheck.getDate() + 1);
-              if(timeoutCheck.getDate() <= heuteData.getDate()){
+              $timeout(function() {
+                if(timeoutCheck.getHours() <= heuteData.getHours() && timeoutCheck.getDate() <= heuteData.getDate()){
                 var attNum = dataval.number;
-                console.log("abbbba");
+                setTimeout(function() {
                 lockersRef.child($scope.key).update({
                   owner: '',
                   ownerClass: '',
@@ -168,7 +194,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                   regData: '',
                   status: 'Expirado'
                 });
-
             setSrc(attNum);
             $scope.lockers.push(
               {
@@ -181,12 +206,13 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                 status: dataval.status
               }
               );
+          });
               }
+            });
             }
           });
         });
       });
-       
         var availableQuery = lockersRef.orderByChild('available').equalTo("Sim");
         availableQuery.once('value', function(snapshot){
           $timeout(function(){

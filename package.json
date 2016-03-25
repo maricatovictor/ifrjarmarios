@@ -22,9 +22,19 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
     "ionic-plugin-deploy",
-    "org.apache.cordova.splashscreen"
+    "org.apache.cordova.network-information"
   ],
   "cordovaPlatforms": [
-    "android"
+    "android",
+    {
+      "platform": "android",
+      "version": "",
+      "locator": "android"
+    },
+    {
+      "platform": "ios",
+      "version": "",
+      "locator": "ios"
+    }
   ]
 }
