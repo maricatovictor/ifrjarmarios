@@ -18,7 +18,7 @@
 
     <!-- cordova script (this will be a 404 during development) -->
     <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
-<!-- <script src="cordova.js"></script> -->
+    <script src="cordova.js"></script>
 
     <!--Firebase-->
     <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
@@ -34,18 +34,18 @@
 
   <!-- Content --> 
   <body ng-app="starter" ng-controller="LockerCtrl">
-    <ion-header-bar align-title="center">
+    <ion-header-bar align-title="center" class="bar-balanced">
     <h1 class="title">
-    <button class="button button-icon ion-ios-flask-outline balanced resizelogo" ng-click="scrollToTop()"></button>
+    <button class="button button-icon ion-ios-flask-outline resizelogo" ng-click="scrollToTop()"></button>
     </h1>
     </ion-header-bar>
 
     <ion-content ng-init="setTimeCountControllers()">
+    <br>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" placeholder="N&#xFA;mero do Arm&#xE1;rio" id="lockerNumberInput">
     </label>
-    
     <button id="search_button" class="button button-full button-balanced" ng-click="getButtonClicked()">
       <i class="ion-search" ></i>
       Pesquisar

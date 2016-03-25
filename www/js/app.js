@@ -5,6 +5,21 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
+.run(function($ionicPlatform) {
+  $ionicPlatform.ready(function() {
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+    }
+    if (window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleLightContent();
+    }
+   if (navigator.splashscreen) {
+     navigator.splashscreen.hide();
+  } 
+  });
+})
+
 .controller('LockerCtrl', function($scope, $firebaseArray, $timeout, $ionicScrollDelegate, $ionicModal, $ionicPopup){
   var lockersRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/armarios');
   var hoursRef = new Firebase('https://ifrjarmariosdb.firebaseio.com/horarios');
@@ -15,7 +30,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   $scope.setTimeCountControllers = function(){
     var searchButton = document.getElementById('search_button');
     if(hnow >= 9 || hnow <= 12 || hnow >= 14 || hnow <= 18 || hnow >= 20 || hnow >= 23){
-      $timeout(function(){
       hoursRef.once('value', function(data){
           var manha1 = data.val().manha1;
           var manhafin = data.val().manhafin;
@@ -55,7 +69,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
             alertText.style.color = "red";
           }
         });
-    });
     }  
     timecheck = 'timecheck' in window;
     countcheck = 'countcheck' in window;
@@ -76,9 +89,8 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   $scope.preLoadLocker = function(locker){
     $scope.showingLocker = [];
         var query = lockersRef.orderByChild('number').equalTo(locker.number); 
-
+        $timeout(function() {
         query.once('value', function(snapshot){
-        $timeout(function(){   
           snapshot.forEach(function(data){
             var attNum = data.val().number;
             dataval = data.val();
@@ -97,8 +109,8 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
               console.log($scope.showingLocker); 
             });
           });
-        });
-};
+      });
+      };
 
 
   $scope.getButtonClicked = function() {
@@ -135,7 +147,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
       else{
         var reservadoQuery = lockersRef.orderByChild('status').equalTo("Reservado");
         reservadoQuery.once('value', function(snapshot){
-           
+           $timeout(function() {
           snapshot.forEach(function(data){
             var dataval = data.val();
             $scope.key = data.key();
@@ -173,9 +185,9 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
             }
           });
         });
+      });
        
         var availableQuery = lockersRef.orderByChild('available').equalTo("Sim");
-
         availableQuery.once('value', function(snapshot){
           $timeout(function(){
           snapshot.forEach(function(data){
@@ -193,7 +205,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                 status: dataval.status
               }
               );
-
             });
           window.availableLockersCount = $scope.lockers.length;
           if(window.availableLockersCount == 0){
@@ -206,8 +217,9 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           alertText.style.color = 'green';
         }
         alertText.innerHTML = "<b>" + window.availableLockersCount + " armarios disponiveis" + "</b>";
-          });
+          
         });
+      });
       }  
   };
 
@@ -243,7 +255,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     $scope.lockerNum = showingLocker.number;
     
     checkLockerQuery.once('value', function(snapshot){
-      $timeout(function(){
+     $timeout(function(){
         snapshot.forEach(function(data){
           dataval = data.val();
           
