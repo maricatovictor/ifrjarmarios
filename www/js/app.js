@@ -88,12 +88,22 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
     countcheck = 'countcheck' in window;
   };
 
-  function setSrc(attNum){
-    if(attNum < 10 || attNum >= 15 && attNum <= 20){
-      $scope.imgSrc = 'img/locker_test2.png';
+  function setFilSrc(attFileira){
+    if(attFileira == 1){
+      $scope.imgFilSrc = 'img/Fileira_1.jpg';
+    }
+    else if(attFileira == 2){
+      $scope.imgFilSrc = 'img/Fileira_2.jpg';
+    }
+    else if(attFileira == 3){
+    	$scope.imgFilSrc = 'img/Fileira_3.jpg';
+
+    }
+    else if(attFileira == 4){
+    	$scope.imgFilSrc = 'img/Fileira_4.jpg';
     }
     else{
-      $scope.imgSrc = 'img/locker_test.jpg';
+    	$scope.imgFilSrc = '';
     }
   };
 
@@ -103,17 +113,19 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   $scope.preLoadLocker = function(locker){
     $scope.showingLocker = [];
         var query = lockersRef.orderByChild('number').equalTo(locker.number); 
-        $timeout(function() {
         query.once('value', function(snapshot){
+        	 $timeout(function() {
           snapshot.forEach(function(data){
-            var attNum = data.val().number;
+            var attFileira = data.val().fileira;
             dataval = data.val();
               $scope.key = data.key();
-              setSrc(attNum);
+              setFilSrc(attFileira);
               $scope.showingLocker = [
               {
-                number: dataval.number, 
-                src:$scope.imgSrc, 
+                number: dataval.number,
+                fileira: dataval.fileira,
+                filSrc: $scope.imgFilSrc, 
+                src: dataval.MapImgSrc, 
                 owner: dataval.owner,
                 ownerClass: dataval.ownerClass,
                 ownerMat: dataval.ownerMat,
@@ -149,14 +161,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
         query.once('value', function(snapshot){
         $timeout(function(){   
           snapshot.forEach(function(data){
-            var attNum = data.val().number;
+            var attFileira = data.val().fileira;
             dataval = data.val();
               $scope.key = data.key(); 
-              setSrc(attNum);
+              setFilSrc(attFileira);
               $scope.lockers = [
               {
-                number: dataval.number, 
-                src:$scope.imgSrc, 
+                number: dataval.number,
+                fileira: dataval.fileira,
+                filSrc: $scope.imgFilSrc,  
+                src: dataval.MapImgSrc, 
                 owner: dataval.owner,
                 ownerClass: dataval.ownerClass,
                 ownerMat: dataval.ownerMat,
@@ -194,11 +208,13 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                   regData: '',
                   status: 'Expirado'
                 });
-            setSrc(attNum);
+            setFilSrc(attFileira);
             $scope.lockers.push(
               {
-                number: dataval.number, 
-                src:$scope.imgSrc, 
+                number: dataval.number,
+                fileira: dataval.fileira,
+                filSrc: $scope.imgFilSrc,  
+                src: dataval.MapImgSrc, 
                 owner: dataval.owner,
                 ownerClass: dataval.ownerClass,
                 ownerMat: dataval.ownerMat,
@@ -218,12 +234,14 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           $timeout(function(){
           snapshot.forEach(function(data){
             dataval = data.val();
-            var attNum = data.val().number;
-            setSrc(attNum);
+            var attFileira = data.val().fileira;
+            setFilSrc(attFileira);
             $scope.lockers.push(
               {
-                number: dataval.number, 
-                src:$scope.imgSrc, 
+                number: dataval.number,
+                fileira: dataval.fileira,
+                filSrc: $scope.imgFilSrc,  
+                src: dataval.MapImgSrc, 
                 owner: dataval.owner,
                 ownerClass: dataval.ownerClass,
                 ownerMat: dataval.ownerMat,

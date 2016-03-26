@@ -35,7 +35,7 @@
   <body ng-app="starter" ng-controller="LockerCtrl">
     <ion-header-bar align-title="center" class="bar-balanced">
     <h1 class="title">
-    <button class="button button-icon ion-ios-flask-outline resizelogo" ng-click="scrollToTop()"></button>
+    <button class="button button-icon ion-ionic resizelogo" ng-click="scrollToTop()"></button>
     </h1>
     </ion-header-bar>
 
@@ -45,17 +45,22 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" placeholder="N&#xFA;mero do Arm&#xE1;rio" id="lockerNumberInput">
     </label>
-    <button id="search_button" class="button button-full button-balanced" ng-click="getButtonClicked()">
+    <div class="row">
+    <div class="col">
+    <button id="search_button" class="button button-block button-balanced" ng-click="getButtonClicked()">
       <i class="ion-search" ></i>
       Pesquisar
     </button>
+    </div>
+    </div>
 
     <p id="alertText" align='center'><b></b></p>
  
       <div class="list card">
         <div class="item item-body" ng-repeat="locker in lockers">
         <a ng-click="preLoadLocker(locker);openLockerInfo()" class="item item-icon-right text-center">
-        <img ng-src="{{locker.src}}" style="width: 35px; height: auto;"> 
+        <img ng-src="{{locker.filSrc}}" style="width: 30px; height: auto;"> 
+        <img ng-src="{{locker.src}}" style="width: 120px; height: auto;"> 
         <p style="text-align: center">  
          Arm&#xE1;rio - {{locker.number}}                    
         </p>
@@ -84,6 +89,11 @@
               <p align="center"><b>{{showingLocker.number}}<br></b></p>
             </ion-item>
             <ion-item class="item item-icon-left">
+            <i class="icon"><img ng-src="{{showingLocker.filSrc}}" align="right" style="width: 30px; height: auto;"> </i>
+            <p align="center">Fileira: <b>{{showingLocker.fileira}}<br></b></p>
+            
+            </ion-item>
+            <ion-item class="item item-icon-left">
             <i class="icon ion-android-person"></i>
             <p align="center"><b>{{showingLocker.owner}}<br></b></p>
             </ion-item>
@@ -104,7 +114,9 @@
             <i class="icon ion-ios-flag"></i>
             <p align="center" id="status_p"><b>{{showingLocker.status}}<br></b></p>
             </ion-item>
-
+            <ion-item>
+            <img ng-src="{{showingLocker.src}}" class="center" style="width: 180px; height: auto;"> 
+            </ion-item>
             <button class="button button-block button-positive" ng-click="openLockerNewReg(showingLocker)">Reservar</button>
             </ion-list>
             </ion-content>

@@ -2,6 +2,11 @@
 .larger {
     font-size: 30px;
 }
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
 .resizelogo{
 	width: auto;
 	height: auto;
