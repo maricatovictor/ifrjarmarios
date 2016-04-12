@@ -443,6 +443,10 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     if(showingLocker.available == "Não" && showingLocker.status == "Alugado"){
       AvBadge.className = "badge badge-assertive";
       }
+    else if(showingLocker.available == "Não" && showingLocker.status == "Renovado"){
+      AvBadge.className = "badge badge-assertive";
+      statusp.style.color = "gold";
+      }
     else if(showingLocker.available == "Sim"){
       AvBadge.className = "badge badge-balanced";
       }
