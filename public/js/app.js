@@ -460,7 +460,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     $scope.lockersInfoModal.hide();
     $scope.lockersNewRegModal.hide();
   }
-
+   
 });
 
  
