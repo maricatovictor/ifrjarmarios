@@ -1,13 +1,33 @@
-// Ionic Starter App
+/* App para reserva de armários desenvolvido para a Chapa Grêmio of Thrones, do Grêmio Elisabetta Bonante do 
+* Instituto Federal do Rio de Janeiro - Campus Rio de Janeiro
+* Outras chapas estão autorizadas a utilizar o aplicativo, contanto que sejam autorizadas a tal
+* A responsabilidade pela aplicação do aplicativo e manutenção do mesmo não é do desenvolvedor do aplicativo, 
+* sendo a chapa que o utiliza responsável por divulgar o aplicativo e, em caso de erros, contatar o desenvolvedor ou 
+* alguém competente para corrigir os mesmos. 
+* O aplicativo foi desenvolvido utilizando o framework Ionic Framework, Ionic.io. 
+* Quaisquer problemas, sugestões e etc., entre em contato com o desenvolvedor. 
+* Plágio é crime, se for constatada tentativa de fraude, utilização ou apropriação indevida do aplicativo, ou outro tipo de ilegalidades, a responsabilidade
+* é do usuário, que será autuado devidamente e o caso será passado para as autoridades competentes. 
+
+* O aplicativo poderá ser modificado. Grandes modificações serão notificadas e deverão ser autorizadas pela Chapa que utilizar o
+* app. Pequenas modificações não necessitam ser avisadas e poderão não ser publicadas no Github.com. 
+
+* O aplicativo é livre para estudos e consultas. 
+
+* Desenvolvido por: Victor Maricato Oliveira
+* Turma (Abril de 2016, Semestre 2016.1): BM131. 
+* Contato: maricatovictor@gmail.com
+*/
+
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 
-.run(function($ionicPlatform, $ionicPopup) {
+.run(function($ionicPlatform, $ionicPopup) { //Roda algumas verificações como checar se o usuário está conectado
   $ionicPlatform.ready(function() {
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) { //Settings para ionic splashart
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
     if (window.StatusBar) {
@@ -17,14 +37,14 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
    if (navigator.splashscreen) {
      navigator.splashscreen.hide();
   } 
-  if(window.Connection) {
+  if(window.Connection) { //Checa se o usuário está conectado
       if(navigator.connection.type == Connection.NONE) {
         $ionicPopup.confirm({
           title: 'Desconectado',
           content: 'Você está sem acesso à internet!'
         })
         .then(function(result) {
-            ionic.Platform.exitApp();
+            ionic.Platform.exitApp(); //Sai do app após popup
         });
       }
     }
@@ -32,16 +52,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
 })
 
 .controller('LockerCtrl', function($scope, $firebaseArray, $timeout, $ionicScrollDelegate, $ionicModal, $ionicPopup){
-  var lockersRef = new Firebase('https://ifrjarmarios.firebaseio.com/armarios');
-  var hoursRef = new Firebase('https://ifrjarmarios.firebaseio.com/horarios');
-  hnow = new Date().getHours();
-  hoursRef.update({ timestamp: Firebase.ServerValue.TIMESTAMP});
-  alertText = document.getElementById('alertText');
-  $scope.setTimeCountControllers = function(){
+  var lockersRef = new Firebase('https://ifrjarmarios.firebaseio.com/armarios'); //Referencia onde o banco está localizado e
+  var hoursRef = new Firebase('https://ifrjarmarios.firebaseio.com/horarios'); // cria uma bar para se comunicar com o banco
+  hnow = new Date().getHours(); //Usa o JS para pegar a hora do device para um check inicial de hora
+  hoursRef.update({ timestamp: Firebase.ServerValue.TIMESTAMP}); //Faz um update da hora atual do server na REST
+  alertText = document.getElementById('alertText'); //Pega o elemento com a id no index.html
+  $scope.setTimeCountControllers = function(){ //Onde ocorrem os checks de hora
     var searchButton = document.getElementById('search_button');
-    if(hnow >= 9 || hnow <= 12 || hnow >= 14 || hnow <= 18 || hnow >= 20 || hnow >= 23){
-      hoursRef.once('value', function(data){
-          var manha1 = data.val().manha1;
+    if(hnow >= 9 || hnow <= 12 || hnow >= 14 || hnow <= 18 || hnow >= 20 || hnow >= 23){ //check inicial
+      hoursRef.once('value', function(data){ //check virtual; não usa o horário do device 
+          var manha1 = data.val().manha1; //pega o valor dessa variável na REST
           var manhafin = data.val().manhafin;
           var tarde1 = data.val().tarde1;
           var tardefin = data.val().tardefin;
@@ -49,15 +69,13 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           var noitefin = data.val().noitefin;
           var lastH1 = data.val().lastH1;
           var lastHfin = data.val().lastHfin;
-          hcount = data.val().hcount;
-          timestamp = data.val().timestamp;
-          timestampDate = new Date(timestamp * 1000).getTime();
+          hcount = data.val().hcount; //pega a variável que armazena a contagem de armários reservados no último turno
+          timestamp = data.val().timestamp; //pega o horário atual no firebase
+          timestampDate = new Date(timestamp * 1000).getTime(); //conversão para uma data legível
           heuteData = new Date(timestampDate);
-          heuteData.setHours(hnow - 2); 
-          console.log(heuteData);
-          if(hnow >= manha1 && hnow < manhafin || hnow >= tarde1 && hnow < tardefin || hnow >= noite1 && hnow < noitefin){
+          heuteData.setHours(hnow - 2); //GMT
+          if(hnow >= manha1 && hnow < manhafin || hnow >= tarde1 && hnow < tardefin || hnow >= noite1 && hnow < noitefin){ //check de horário
             window.timecheck = true;
-
             if(hnow != lastH1 && hnow != lastHfin){
               hoursRef.update({hcount: 0});
             }
@@ -66,7 +84,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           thisHourFin = hnow + 1;
           hoursRef.update({lastH1: thisHourI, lastHfin:thisHourFin} );
 
-            if(hcount < 125){
+            if(hcount < 125){ //check de armários registrados
             window.countcheck = true;
             }
             else{
@@ -84,11 +102,11 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           }
         });
     }  
-    timecheck = 'timecheck' in window;
+    timecheck = 'timecheck' in window; //retorna como boolean se timecheck estiver true em window
     countcheck = 'countcheck' in window;
   };
 
-  function setFilSrc(attFileira){
+  function setFilSrc(attFileira){ //define no app as imagens de coordenada de fileira
     if(attFileira == 1){
       $scope.imgFilSrc = 'img/Fileira_1.jpg';
     }
@@ -110,7 +128,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
   $scope.scrollToTop = function(){
     $ionicScrollDelegate.scrollTop();
   }
-  $scope.preLoadLocker = function(locker){
+  $scope.preLoadLocker = function(locker){ //baixa o armário que será mostrado na segunda activity e o prepara para ser mostrado
     $scope.showingLocker = [];
         var query = lockersRef.orderByChild('number').equalTo(locker.number); 
         query.once('value', function(snapshot){
@@ -132,15 +150,14 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                 available: dataval.available,
                 status: dataval.status
               }];
-              console.log($scope.showingLocker); 
             });
           });
       });
       };
 
 
-  $scope.getButtonClicked = function() {
-    if(window.Connection) {
+  $scope.getButtonClicked = function() { //Função executada no botão de 'Pesquisar'
+    if(window.Connection) { //confirma novamente se a internet está OK
       if(navigator.connection.type == Connection.NONE) {
         $ionicPopup.confirm({
           title: 'Desconectado',
@@ -154,10 +171,10 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
     $scope.lockers = [];
     alertText.innerHTML = "";
       var lockernumber = document.getElementById('lockerNumberInput').value;
-      if(lockernumber.length > 0){
+      
+      if(lockernumber.length > 0){ //vê se algum número específico foi escrito na barra de pesquisa
         lockerInputedNumber = parseInt(lockernumber);
         var query = lockersRef.orderByChild('number').equalTo(lockerInputedNumber); 
-        
         query.once('value', function(snapshot){
         $timeout(function(){   
           snapshot.forEach(function(data){
@@ -177,13 +194,12 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
                 available: dataval.available,
                 status: dataval.status
               }];
-              console.log($scope.lockers); 
             });
           });
         });
       }
  
-      else{
+      else{ //se não houver nenhum número na barra de pesquisa, busca todos os armários que estão reservados e verifica se já expiraram
         var reservadoQuery = lockersRef.orderByChild('status').equalTo("Reservado");
         $timeout(function() {
         reservadoQuery.once('value', function(snapshot){
@@ -192,7 +208,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
             $scope.key = data.key();
             if(dataval.status == 'Reservado' && dataval.available == 'Não'){
               regData = new Date(data.val().regData);
-              console.log(regData.getHours() + 1);
               timeoutCheck = regData;
               timeoutCheck.setDate(timeoutCheck.getDate() + 1);
               $timeout(function() {
@@ -229,9 +244,9 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
           });
         });
       });
-        var availableQuery = lockersRef.orderByChild('available').equalTo("Sim");
-        availableQuery.once('value', function(snapshot){
-          $timeout(function(){
+        var availableQuery = lockersRef.orderByChild('available').equalTo("Sim"); 
+        availableQuery.once('value', function(snapshot){ //busca todos os armários disponíveis e armaneza num array enviado ao HTML
+          $timeout(function(){ //Timeout para garantir que o app espera esse resultado chegar antes de ler a próxima função
           snapshot.forEach(function(data){
             dataval = data.val();
             var attFileira = data.val().fileira;
@@ -267,7 +282,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'firebase'])
       }  
   };
 
-$ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
+$ionicModal.fromTemplateUrl('lockers-info.html', function(modal) { //modal para próxima activity
     $scope.lockersInfoModal = modal;
   }, {
     scope: $scope,
@@ -282,11 +297,10 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     animation: 'slide-in-up'
   });
 
-  $scope.openLockerNewReg = function(showingLocker){
-    //Executar if available
+  $scope.openLockerNewReg = function(showingLocker){ //abre o modal para reservar um armário
     hoursRef.once('value', function(snapshot){
       hcount = snapshot.val().hcount;
-      if(hcount < 125){
+      if(hcount < 125){ //faz um check pra ver se ainda é permitido reservar
             countcheck = true;
           }
 
@@ -304,7 +318,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
           dataval = data.val();
           
           if(dataval.available == "Sim" && timecheck === true && countcheck === true){
-            $scope.lockersNewRegModal.show();
+            $scope.lockersNewRegModal.show(); //se tudo estiver certo, exibe a activity de reserva de armário, se não, apresenta o erro
           }
 
           else if(dataval.available == "Não"){
@@ -338,7 +352,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
       });
     };
 
-  $scope.updateLockerInfo = function(showingLocker){
+  $scope.updateLockerInfo = function(showingLocker){ //Reserva o Armário com as informações inseridas na activity de reserva
     hoursRef.once('value', function(snapshot){
       hcount = snapshot.val().hcount;
 
@@ -356,8 +370,8 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     var lockerNum = parseInt($scope.lockerNum);
     var submitInfo = document.getElementById("submitInfo");
 
-    if(ownerInputName.length > 0 && ownerInputClass
-      .length > 0 && ownerInputMat.length > 0 && ownerInputContact.length > 0){
+    if(ownerInputName.length > 0 && ownerInputClass 
+      .length > 0 && ownerInputMat.length > 0 && ownerInputContact.length > 0){ //checa se está tudo preenchido
 
     updateInfoQuery = lockersRef.orderByChild('number').equalTo(lockerNum);
   $timeout(function(){
@@ -371,7 +385,6 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     });
   });
     matCheck = 'matCheck' in window;
-    console.log(matCheck);
     updateInfoQuery.once('value', function(snapshot){
       snapshot.forEach(function(data){
         var key = data.key();
@@ -388,7 +401,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
           available: 'Não',
           status: 'Reservado',
           regData: heuteData
-          });
+          }); //faz o push das informações inseridas na REST
         $ionicPopup.alert(
           {
         title: 'Sucesso',
@@ -415,7 +428,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
           $scope.lockersInfoModal.hide();
           $scope.lockersNewRegModal.hide();
           }
-      else if(matCheck === false){
+      else if(matCheck === false){ //matrícula já cadastrada
         $ionicPopup.alert({
               title: 'Já há um armário registrado nesta matrícula',
               template: 'Permita que outras pessoas também possam alugar seus armários'
@@ -437,7 +450,7 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
   $scope.openLockerInfo = function(){
     $scope.lockersInfoModal.show();
   }
-  $scope.setAvBadgeColor = function(showingLocker){
+  $scope.setAvBadgeColor = function(showingLocker){ //função estética, altera as cores de acordo com o status do armário
     var AvBadge = document.getElementById("av_badge");
     var statusp = document.getElementById("status_p");
     if(showingLocker.available == "Não" && showingLocker.status == "Alugado"){
@@ -461,19 +474,4 @@ $ionicModal.fromTemplateUrl('lockers-info.html', function(modal) {
     $scope.lockersNewRegModal.hide();
   }
 
-});
-
- 
-/*   
-$scope.addLocker = function(){
-      var number = 400; //ultimo numero de armario
-      for(i=0;i<5;i++){ //i<quantidade de armarios a serem adicionados
-        number++;
-      lockersRef.push().set({
-          'number': number,
-          'available': 'Sim',
-           'status': "Disponível"
-        });
-    } 
-    };*/
-
+}); //acaba o app.js
