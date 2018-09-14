@@ -1,0 +1,25 @@
+/* Empty. Add your own CSS if you like */
+.larger {
+    font-size: 30px;
+}
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.resizelogo{
+	width: auto;
+	height: auto;
+	padding: 0px !important;
+	}
+.right {
+	align-content: right;
+}
+.badge {
+    position:center !important;
+    display: inline !important;
+    top: center !important;
+}
+.popup-body {
+  text-align: center;
+}
